@@ -1,8 +1,8 @@
 {
-  "name": "vue-cddv",
-  "version": "1.0.0",
+  "name": "vue-cdd-validator",
+  "version": "1.0.1",
   "description": "一个用于vue.js表单验证的插件",
-  "main": "cddV.js",
+  "main": "cddv.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

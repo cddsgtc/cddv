@@ -193,8 +193,8 @@ class V {
                     }
                 }
                 // 如果存在aim选项则进行值的最优选择
-                let checkValue = v.value.aim || vm.$data[v.value.aim] || el.value
-                return self.cfg[v.arg](checkValue, v.value.format)
+                let checkValue = v.value.aim || vm.$data[v.value.aim] || v.value.format
+                return self.cfg[v.arg](el.value, checkValue)
             },
             msg(v, el, ves) {
                 // 错误信息附加信息
