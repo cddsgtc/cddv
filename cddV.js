@@ -90,7 +90,6 @@ class V {
                 }
                 // 如果没有加入其中，则加入，把需要验证的项添加到实例的_.cddv.forms中
                 if (!cddv.forms[v.value.id]) cddv.forms[v.value.id] = el
-                console.log(vm._cddv.forms)
                 // 给该元素添加监听事件验证
                 el.onchange = function () {
                     if(!el._cddv.dirty) el._cddv.dirty=true
@@ -99,10 +98,6 @@ class V {
                     ves = cddv.check(v, el, vm)
                     // 对每个元素设置
                     cddv.msg(v, el, ves)
-
-                    console.log(el._cddv)
-                    console.log(el._cddv.msg)
-                    // console.log(binding)
                     // 定义自定义事件
                     vm.$emit('cddv-checked')
                 }
