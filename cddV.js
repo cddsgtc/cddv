@@ -1,7 +1,6 @@
 class V {
     constructor() {
         // 需要验证的表单集合
-        // this._cddv = []
         this._cfg = {
             // 空白文字
             nonvoid(v, bool) {
@@ -51,12 +50,6 @@ class V {
             unequal: '两次输入的值重复'
         }
     }
-    // get cddv() {
-    //     return this._cddv
-    // }
-    // set cddv(value) {
-    //     this._cddv = value
-    // }
     get ERR_MSG() {
         return this._ERR_MSG
     }
@@ -248,5 +241,4 @@ class V {
         }
     }
 }
-
 export default new V()
