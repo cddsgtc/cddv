@@ -2,11 +2,12 @@
 
 ## 获取
 **github**:[这里](https://github.com/cddsgtc/cddv)
-**npm**
+
+**npm安装**
 ```
 npm i vue-cdd-validator --save
 ```
-**yarn**
+**yarn安装**
 ```
 yarn add vue-cdd-validator
 ```
@@ -111,7 +112,7 @@ Vue.use(cddv);
 
 有两个元素会在验证失败时添加类名
 * `v-cdd-input`，在有这个指令的表单元素在验证失败时会添加`input-check-failed`类名
-* `cddv-final-check`，在有这个指令的表单元素在验证失败时会添加`submit-check-failed`类名(这个一般是提交按钮)
+* `cddv-final-check`，在有这个指令的元素在验证失败时会添加`submit-check-failed`类名(这个一般是提交按钮)
 当然用户也可以自定义类名
 
 ### 方法
