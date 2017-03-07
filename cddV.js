@@ -49,6 +49,13 @@ class V {
             equal: '两次输入的值不相等',
             unequal: '两次输入的值重复'
         }
+        this.inputCheckClass = 'input-check-failed'
+        this.finalCheckClass = 'final-check-failed'
+    }
+    cinfig(o){
+        this.inputCheckClass = o.inputCheckClass
+        this.finalCheckClass = o.finalCheckClass
+
     }
     get ERR_MSG() {
         return this._ERR_MSG
@@ -59,6 +66,21 @@ class V {
     get regList() {
         return this._regList
     }
+
+    addClass(el, className) {
+        let classArr = el.className.split()
+        if (classArr.indexOf(className) == -1) {
+            classArr.push(className)
+            el.className = classArr.join(' ')
+        }
+    }
+
+    removeClass(el, className) {
+        let reg = new RegExp("(\\s" + className + "|" + className + "\\s)", 'g')
+        el.className = el.className.replace(reg, '')
+    }
+
+
 
     install(Vue, options) {
         // cddv本身
@@ -97,6 +119,8 @@ class V {
                     ves = cddv.check(v, el, vm)
                     // 对每个元素设置
                     cddv.msg(v, el, ves)
+                    // 如果验证错误则添加一个类
+                    el._cddv.validated ? self.removeClass(el, self.inputCheckClass) : self.addClass(el, self.inputCheckClass)
                     // 定义自定义事件
                     vm.$emit('cddv-checked')
                 }
@@ -158,18 +182,11 @@ class V {
                             }
                         }
                     }
-                    // 如果验证通过或者不通过的进一步处理
-                    let className = el.className.split(' ')
                     if (!validated) { //验证未通过
                         el.onclick = () => {}
-                        if (className.indexOf('submit-check-failed') == -1) {
-                            className.push('submit-check-failed')
-                        }
-                        el.className = className.join(' ')
-
+                        self.addClass(el, self.finalCheckClass)
                     } else { //验证通过
-                        className.pop()
-                        el.className = className.join(' ')
+                        self.removeClass(el, self.finalCheckClass)
                         if (v.arg) {
                             el.onclick = vm[v.arg]
                         } else(

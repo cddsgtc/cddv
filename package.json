@@ -1,6 +1,6 @@
 {
   "name": "vue-cdd-validator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "一个用于vue.js表单验证的插件",
   "main": "cddv.min.js",
   "scripts": {
