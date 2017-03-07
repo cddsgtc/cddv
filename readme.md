@@ -19,11 +19,40 @@ Vue.use(cddv);
 
 ## 表单指令——`v-cddv-input:arg={id:,format:,,title:,}`
 * id是每个表单独有的，用来识别表单，在进行信息反馈时也需要做为反馈的指令参数
+* arg是指令参数，填写的是需要验证的项
+    - 常用的有
+        1. nonvoid 不可为空/必填
+        2. reg 正则
+        3. equal 需要等与某个项
+        4. unequal 不能等于某项
+* id[string] 是当前表单的识别id不可重复
+* format 自定义验证的值
+    - nonvoid 指令参数的话需要填写true
+    - reg 需要填写内定的或者自定义的正则法则
+        - 内置的常用的正则有
+            + 'ImgCode'
+            + 'SmsCode'
+            + 'MailCode'
+            + 'UserName'用户名4到16位的字母或数字
+            + 'Pasword'6到16位的可包含字母和!@#$%^&*.的组合
+            + 'Mobile'电话号码
+            + 'RealName'真实名字2到10位的汉字
+            + 'BankNum'银行卡号
+            + 'Money'钱
+            + 'Answer'
+            + 'Mail'邮箱
+        - 当天写的format值不是这些时将安做自定义正则进行匹配
+    - equal 要求等于某个值，此时的format可以填写组件的data,当这些都没有匹配到时，当作自定义的值来使用。(如果重复则会出现问题)
+    - unequal 类似于equal但是时不应该等于某个值,在该指令的值中应给出aim属性
+* title，可以给当前的表单起一个自定义的名字，报错时识别信息使用
+* aim ，一般不使用，但是在使用equal或者unequal时为了防止错误，可以使用aim来额外当作format使用，优先级高于format。可以是自定义的值，组件的data某个值，或者某个表单的id。
+
 
 ### 示例
 ```
 <div>
-<input v-cddv-input:type="{id:'email',format:'Mail',title:'邮箱'}" type=text ../>
+<label>确认密码</label>
+<input type='password' v-cddv-input:equal="{id:'rePsd',format:'Mail',title:'确认密码',mai:'newPsd'}" type=text ../>
 </div>
 <div v-cddv-msg:email></div>
 
