@@ -1,5 +1,8 @@
 class V {
-    constructor() {
+    constructor(o = {
+        inputCheckClass: 'input-check-failed',
+        finalCheckClass: 'submit-check-failed'
+    }) {
         // 需要验证的表单集合
         this._cfg = {
             // 空白文字
@@ -49,10 +52,13 @@ class V {
             equal: '两次输入的值不相等',
             unequal: '两次输入的值重复'
         }
-        this.inputCheckClass = 'input-check-failed'
-        this.finalCheckClass = 'final-check-failed'
+        this.inputCheckClass = o.inputCheckClass
+        this.finalCheckClass = o.finalCheckClass
     }
-    cinfig(o){
+    cinfig(o = {
+        inputCheckClass: 'input-check-failed',
+        finalCheckClass: 'submit-check-failed'
+    }) {
         this.inputCheckClass = o.inputCheckClass
         this.finalCheckClass = o.finalCheckClass
 
@@ -255,4 +261,4 @@ class V {
         }
     }
 }
-export default new V()
+export default V

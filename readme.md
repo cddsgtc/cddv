@@ -2,7 +2,8 @@
 
 ## 一、安装
 ```
-import cddv from cddv;
+import Cddv from cddv;
+let cddv = new Cddv()
 Vue.use(cddv);
 ```
 
@@ -94,3 +95,29 @@ Vue.use(cddv);
 ```
 <a classs='btn' v-cddv-final-check:method="{keys:['id1','id2',...]}">提交</a>
 ```
+
+## 自定义验证失败时的类名
+
+有两个元素会在验证失败时添加类名
+* `v-cdd-input`，在有这个指令的表单元素在验证失败时会添加`input-check-failed`类名
+* `cddv-final-check`，在有这个指令的表单元素在验证失败时会添加`final-check-failed`类名(这个一般是提交按钮)
+当然用户也可以自定义类名
+
+### 方法
+
+#### 一
+该插件的默认类名是V
+所以使用new来建立一个实例，然后在构造函数中加入
+```
+var cddv = new V({inputCheckClass:xxx,finalCheckClass:xxx})
+Vue.use(cddv)
+```
+#### 二
+
+使用实例方法`config`,该方法传入一个跟构造函数一样的对象
+```
+var cddv = new V({)
+cddv.config(inputCheckClass:xxx,finalCheckClass:xxx})
+Vue.use(cddv)
+```
+
