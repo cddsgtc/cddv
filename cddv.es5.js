@@ -10,6 +10,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var V = function () {
     function V() {
+        var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+            inputCheckClass: 'input-check-failed',
+            finalCheckClass: 'submit-check-failed'
+        };
+
         _classCallCheck(this, V);
 
         // 需要验证的表单集合
@@ -65,9 +70,37 @@ var V = function () {
             equal: '两次输入的值不相等',
             unequal: '两次输入的值重复'
         };
+        this.inputCheckClass = o.inputCheckClass;
+        this.finalCheckClass = o.finalCheckClass;
     }
 
     _createClass(V, [{
+        key: 'cinfig',
+        value: function cinfig() {
+            var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+                inputCheckClass: 'input-check-failed',
+                finalCheckClass: 'submit-check-failed'
+            };
+
+            this.inputCheckClass = o.inputCheckClass;
+            this.finalCheckClass = o.finalCheckClass;
+        }
+    }, {
+        key: 'addClass',
+        value: function addClass(el, className) {
+            var classArr = el.className.split();
+            if (classArr.indexOf(className) == -1) {
+                classArr.push(className);
+                el.className = classArr.join(' ');
+            }
+        }
+    }, {
+        key: 'removeClass',
+        value: function removeClass(el, className) {
+            var reg = new RegExp("(\\s" + className + "|" + className + "\\s)", 'g');
+            el.className = el.className.replace(reg, '');
+        }
+    }, {
         key: 'install',
         value: function install(Vue, options) {
             // cddv本身
@@ -106,6 +139,8 @@ var V = function () {
                         ves = cddv.check(v, el, vm);
                         // 对每个元素设置
                         cddv.msg(v, el, ves);
+                        // 如果验证错误则添加一个类
+                        el._cddv.validated ? self.removeClass(el, self.inputCheckClass) : self.addClass(el, self.inputCheckClass);
                         // 定义自定义事件
                         vm.$emit('cddv-checked');
                     };
@@ -167,19 +202,13 @@ var V = function () {
                                 }
                             }
                         }
-                        // 如果验证通过或者不通过的进一步处理
-                        var className = el.className.split(' ');
                         if (!validated) {
                             //验证未通过
                             el.onclick = function () {};
-                            if (className.indexOf('submit-check-failed') == -1) {
-                                className.push('submit-check-failed');
-                            }
-                            el.className = className.join(' ');
+                            self.addClass(el, self.finalCheckClass);
                         } else {
                             //验证通过
-                            className.pop();
-                            el.className = className.join(' ');
+                            self.removeClass(el, self.finalCheckClass);
                             if (v.arg) {
                                 el.onclick = vm[v.arg];
                             } else el.onclick = v.value.method;
@@ -265,4 +294,4 @@ var V = function () {
     return V;
 }();
 
-exports.default = new V();
+exports.default = V;
