@@ -1,19 +1,18 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var V = (function () {
+var V = function () {
     function V() {
         _classCallCheck(this, V);
 
         // 需要验证的表单集合
-        // this._cddv = []
         this._cfg = {
             // 空白文字
             nonvoid: function nonvoid(v, bool) {
@@ -23,18 +22,22 @@ var V = (function () {
                     return 0;
                 }
             },
+
             // 正则
             reg: function reg(v, _reg) {
                 return _reg.test(v) ? 0 : ['reg'];
             },
+
             // 区间
             limit: function limit(v, interval) {
                 return +v >= interval[0] && +v <= interval[1] ? 0 : ['limit'];
             },
+
             // 等于
             equal: function equal(v, target) {
                 return v == target ? 0 : ['equal'];
             },
+
             // 不等于
             unequal: function unequal(v, target) {
                 return v != target ? 0 : ['unequal'];
@@ -63,13 +66,6 @@ var V = (function () {
             unequal: '两次输入的值重复'
         };
     }
-
-    // get cddv() {
-    //     return this._cddv
-    // }
-    // set cddv(value) {
-    //     this._cddv = value
-    // }
 
     _createClass(V, [{
         key: 'install',
@@ -103,19 +99,13 @@ var V = (function () {
                     }
                     // 如果没有加入其中，则加入，把需要验证的项添加到实例的_.cddv.forms中
                     if (!cddv.forms[v.value.id]) cddv.forms[v.value.id] = el;
-                    console.log(vm._cddv.forms);
                     // 给该元素添加监听事件验证
                     el.onchange = function () {
+                        // 查看当前表单是否输入果值
                         if (!el._cddv.dirty) el._cddv.dirty = true;
-                        // console.log()
-                        // console.log(self.cfg[v.arg](el.value, v.value.format))
                         ves = cddv.check(v, el, vm);
                         // 对每个元素设置
                         cddv.msg(v, el, ves);
-
-                        console.log(el._cddv);
-                        console.log(el._cddv.msg);
-                        // console.log(binding)
                         // 定义自定义事件
                         vm.$emit('cddv-checked');
                     };
@@ -194,12 +184,10 @@ var V = (function () {
                                 el.onclick = vm[v.arg];
                             } else el.onclick = v.value.method;
                         }
-
                         // 如果通过则执行
                     });
                 }
             });
-
             // 实例方法，为每个实例添加一个对象属性
             Vue.prototype._cddv = {
                 forms: {},
@@ -209,9 +197,14 @@ var V = (function () {
                             v.value.format = self._regList[v.value.format];
                         }
                     }
-                    // 如果存在aim选项则进行值的最优选择
-                    var checkValue = v.value.aim || vm.$data[v.value.aim] || el.value;
-                    return self.cfg[v.arg](checkValue, v.value.format);
+                    var checkValue = '';
+                    if (v.value.aim) {
+                        checkValue = vm._cddv.forms[v.value.aim].value || vm.$data[v.value.aim];
+                    } else {
+                        checkValue = vm.$data[v.value.format] || v.value.format;
+                    }
+
+                    return self.cfg[v.arg](el.value, checkValue);
                 },
                 msg: function msg(v, el, ves) {
                     // 错误信息附加信息
@@ -270,7 +263,6 @@ var V = (function () {
     }]);
 
     return V;
-})();
+}();
 
-exports['default'] = new V();
-module.exports = exports['default'];
+exports.default = new V();

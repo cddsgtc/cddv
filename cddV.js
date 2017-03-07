@@ -80,7 +80,7 @@ class V {
                 // 给el添加东西
                 if (!el._cddv) {
                     el._cddv = {
-                        dirty:false,
+                        dirty: false,
                         v_type: v.arg,
                         indeed_value: v.value.format,
                         validated: false,
@@ -92,9 +92,8 @@ class V {
                 if (!cddv.forms[v.value.id]) cddv.forms[v.value.id] = el
                 // 给该元素添加监听事件验证
                 el.onchange = function () {
-                    if(!el._cddv.dirty) el._cddv.dirty=true
-                    // console.log()
-                    // console.log(self.cfg[v.arg](el.value, v.value.format))
+                    // 查看当前表单是否输入果值
+                    if (!el._cddv.dirty) el._cddv.dirty = true
                     ves = cddv.check(v, el, vm)
                     // 对每个元素设置
                     cddv.msg(v, el, ves)
@@ -120,7 +119,7 @@ class V {
                     // console.log(vm._cddv)
                     if (listener._cddv.validated) {
                         el.style.display = 'none'
-                    } else if(!listener._cddv.validated && listener._cddv.dirty) {
+                    } else if (!listener._cddv.validated && listener._cddv.dirty) {
                         el.style.display = 'block'
                         el.innerHTML = listener._cddv.msg
                     }
@@ -177,12 +176,10 @@ class V {
                             el.onclick = v.value.method
                         )
                     }
-
                     // 如果通过则执行
                 })
             }
         })
-
         // 实例方法，为每个实例添加一个对象属性
         Vue.prototype._cddv = {
             forms: {},
@@ -192,8 +189,13 @@ class V {
                         v.value.format = self._regList[v.value.format]
                     }
                 }
-                // 如果存在aim选项则进行值的最优选择
-                let checkValue = v.value.aim || vm.$data[v.value.aim] || v.value.format
+                let checkValue = ''
+                if (v.value.aim) {
+                    checkValue = vm._cddv.forms[v.value.aim].value || vm.$data[v.value.aim]
+                } else {
+                    checkValue = vm.$data[v.value.format] || v.value.format
+                }
+
                 return self.cfg[v.arg](el.value, checkValue)
             },
             msg(v, el, ves) {
