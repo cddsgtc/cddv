@@ -1,6 +1,17 @@
 # cddv vue.js 表单验证插件使用说明
 
-## 一、安装
+## 获取
+**github**:[这里](https://github.com/cddsgtc/cddv)
+**npm**
+```
+npm i vue-cdd-validator --save
+```
+**yarn**
+```
+yarn add vue-cdd-validator
+```
+
+## 安装
 ```
 import Cddv from cddv;
 let cddv = new Cddv()
