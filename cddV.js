@@ -1,7 +1,9 @@
 class V {
     constructor(o = {
         inputCheckClass: 'input-check-failed',
-        finalCheckClass: 'submit-check-failed'
+        finalCheckClass: 'submit-check-failed',
+        errorMsgShow: 'cddv-msg-show',
+        errorMsgHidden: 'cddv-msg-hidden',
     }) {
         // 需要验证的表单集合
         this._cfg = {
@@ -54,25 +56,30 @@ class V {
         }
         this.inputCheckClass = o.inputCheckClass
         this.finalCheckClass = o.finalCheckClass
+        this.errorMsgHidden = o.errorMsgHidden
+        this.errorMsgShow = o.errorMsgShow
     }
+
     cinfig(o = {
         inputCheckClass: 'input-check-failed',
         finalCheckClass: 'submit-check-failed'
     }) {
         this.inputCheckClass = o.inputCheckClass
         this.finalCheckClass = o.finalCheckClass
-
     }
+
     get ERR_MSG() {
         return this._ERR_MSG
     }
+
     get cfg() {
         return this._cfg
     }
+
     get regList() {
         return this._regList
     }
-
+    // 添加类
     addClass(el, className) {
         let classArr = el.className.split()
         if (classArr.indexOf(className) == -1) {
@@ -81,21 +88,66 @@ class V {
         }
     }
 
+    // 移出类
     removeClass(el, className) {
         let reg = new RegExp("(\\s" + className + "|" + className + "\\s)", 'g')
         el.className = el.className.replace(reg, '')
     }
+    // 检查
+    check(v, el, vm) {
+        var checkValue
 
+        if (v.arg == 'reg') {
+            if (!this._regList[v.value.format]) {
+                checkValue = typeof v.value.format == 'stirng'? new RegExp(v.value.format):v.value.format
+            } else {
+                checkValue = this._regList[v.value.format]
+            }
+        } else if (v.value.aim) {
+            checkValue = vm._cddv.forms[v.value.aim].value || vm.$data[v.value.aim]
+        } else {
+            checkValue = vm.$data[v.value.format] || v.value.format
+        }
 
-
+        var ves = this.cfg[v.arg](el.value, checkValue)
+        if (ves == 0) { el._cddv.validated = true } else { el._cddv.validated = false }
+        return ves
+    }
+    // 信息
+    msg(v, el, ves) {
+        // 错误信息附加信息
+        let str = ''
+        switch (ves[0]) {
+            case 'nonvoid':
+                str = '[' + v.value.title + ']'
+                el._cddv.msg = str + this._ERR_MSG[ves]
+                break
+            case 'reg':
+                str = "[" + v.value.title + ']格式错误'
+                el._cddv.msg = str
+                break
+            case 'limit':
+                str = +el.value < v.value.format[0] ? '[' + v.value.title + ']应该大于' + v.value.format[0] : '[' + v.value.title + ']应该小于' + v.value.format[1]
+                el._cddv.msg = this._ERR_MSG[ves] + str
+                break
+            case 'equal':
+                str = "[" + v.value.title + ']'
+                el._cddv.msg = str + this._ERR_MSG[ves]
+                break
+            case 'unequal':
+                str = '[' + v.value.title + ']'
+                el._cddv.msg = str + this._ERR_MSG[ves]
+                break
+            default:
+                el._cddv.msg = "[" + v.value.title + "]验证通过"
+        }
+    }
     install(Vue, options) {
         // cddv本身
         let self = this
         // 验证上的指令
         Vue.directive('cddv-input', {
             bind(el, binding, vnode) {
-                // 用来验证结果
-                let ves = 0
                 // 指令值
                 let v = {
                     value: binding.value || '',
@@ -105,28 +157,32 @@ class V {
                 let vm = vnode.context,
                     cddv = vm._cddv
 
-                // 给el添加东西
-                if (!el._cddv) {
-                    el._cddv = {
-                        dirty: false,
-                        v_type: v.arg,
-                        indeed_value: v.value.format,
-                        validated: false,
-                        msg: '未进行验证',
-                        title: v.value.title
-                    }
+                // 给el添加_cddv
+                el._cddv = {
+                    dirty: false,
+                    v_type: v.arg,
+                    indeed_value: v.value.format,
+                    validated: false,
+                    msg: '未进行验证',
+                    title: v.value.title
                 }
-                // 如果没有加入其中，则加入，把需要验证的项添加到实例的_.cddv.forms中
-                if (!cddv.forms[v.value.id]) cddv.forms[v.value.id] = el
+                // 初始化
+                cddv.forms[v.value.id] = el
                 // 给该元素添加监听事件验证
                 el.onchange = function () {
                     // 查看当前表单是否输入果值
                     if (!el._cddv.dirty) el._cddv.dirty = true
-                    ves = cddv.check(v, el, vm)
+                    // 进行验证
+                    let ves = 0
+                    ves = self.check(v, el, vm)
                     // 对每个元素设置
-                    cddv.msg(v, el, ves)
+                    self.msg(v, el, ves)
                     // 如果验证错误则添加一个类
-                    el._cddv.validated ? self.removeClass(el, self.inputCheckClass) : self.addClass(el, self.inputCheckClass)
+                    if (el._cddv.validated) {
+                        self.removeClass(el, self.inputCheckClass)
+                    } else {
+                        self.addClass(el, self.inputCheckClass)
+                    }
                     // 定义自定义事件
                     vm.$emit('cddv-checked')
                 }
@@ -140,17 +196,16 @@ class V {
                 }
                 let vm = vnode.context
 
-                // 把元素的样式设置成non
-                el.style.display = 'none'
-
-                let listener = vm._cddv.forms[v.arg]
+                self.addClass(el, self.errorMsgHidden)
                 // 自定义事件，监听目标值的变化
-                vm.$on('cddv-checked', () => {
-                    // console.log(vm._cddv)
+                vm.$on('cddv-checked', function () {
+                    let listener = vm._cddv.forms[v.arg]
                     if (listener._cddv.validated) {
-                        el.style.display = 'none'
+                        self.removeClass(el, self.errorMsgShow)
+                        self.addClass(el, self.errorMsgHidden)
                     } else if (!listener._cddv.validated && listener._cddv.dirty) {
-                        el.style.display = 'block'
+                        self.removeClass(el, self.errorMsgHidden)
+                        self.addClass(el, self.errorMsgShow)
                         el.innerHTML = listener._cddv.msg
                     }
                 })
@@ -171,11 +226,9 @@ class V {
                     // 如果传递了key选项择进行指定的验证
                     if (v.value.keys) {
                         validated = v.value.keys.every((item, index) => {
-                            // console.log(vm._cddv.forms[item])
                             return vm._cddv.forms[item]._cddv.validated
                         })
                     } else {
-                        console.log(vm._cddv.forms)
                         for (let item in vm._cddv.forms) {
                             if (item == 'undefined') {
                                 continue
@@ -189,13 +242,14 @@ class V {
                         }
                     }
                     if (!validated) { //验证未通过
-                        el.onclick = () => {}
+                        el.onclick = () => {
+                        }
                         self.addClass(el, self.finalCheckClass)
                     } else { //验证通过
                         self.removeClass(el, self.finalCheckClass)
                         if (v.arg) {
                             el.onclick = vm[v.arg]
-                        } else(
+                        } else (
                             el.onclick = v.value.method
                         )
                     }
@@ -205,60 +259,14 @@ class V {
         })
         // 实例方法，为每个实例添加一个对象属性
         Vue.prototype._cddv = {
-            forms: {},
-            check(v, el, vm) {
-                if (v.arg == 'reg') {
-                    if (self._regList[v.value.format]) {
-                        v.value.format = self._regList[v.value.format]
-                    }
-                }
-                let checkValue = ''
-                if (v.value.aim) {
-                    checkValue = vm._cddv.forms[v.value.aim].value || vm.$data[v.value.aim]
-                } else {
-                    checkValue = vm.$data[v.value.format] || v.value.format
-                }
-
-                return self.cfg[v.arg](el.value, checkValue)
-            },
-            msg(v, el, ves) {
-                // 错误信息附加信息
-                let str = ''
-                switch (ves[0]) {
-                    case 'nonvoid':
-                        str = '[' + v.value.title + ']'
-                        el._cddv.validated = false
-                        el._cddv.msg = str + self._ERR_MSG[ves]
-                        break
-                    case 'reg':
-                        str = "[" + v.value.title + ']格式错误'
-                        el._cddv.validated = false
-                        el._cddv.msg = str
-                        break
-                    case 'limit':
-                        str = +el.value < v.value.format[0] ? '[' + v.value.title + ']应该大于' + v.value.format[0] : '[' + v.value.title + ']应该小于' + v.value.format[1]
-                        el._cddv.validated = false
-                        el._cddv.msg = self._ERR_MSG[ves] + str
-                        break
-                    case 'equal':
-                        str = "[" + v.value.title + ']'
-                        el._cddv.validated = false
-                        el._cddv.msg = str + self._ERR_MSG[ves]
-                        break
-                    case 'unequal':
-                        str = '[' + v.value.title + ']'
-                        el._cddv.validated = false
-                        el._cddv.msg = str + self._ERR_MSG[ves]
-                        break
-                    default:
-                        el._cddv.validated = true
-                        el._cddv.msg = "[" + v.value.title + "]验证通过"
-                }
-            },
-            value() {
-                return this
-            }
+            forms: {}
         }
+
+        Vue.mixin({
+            mounted() {
+
+            }
+        })
     }
 }
 export default V

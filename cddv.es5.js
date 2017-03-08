@@ -1,19 +1,21 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var V = function () {
+var V = (function () {
     function V() {
-        var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        var o = arguments.length <= 0 || arguments[0] === undefined ? {
             inputCheckClass: 'input-check-failed',
-            finalCheckClass: 'submit-check-failed'
-        };
+            finalCheckClass: 'submit-check-failed',
+            errorMsgShow: 'cddv-msg-show',
+            errorMsgHidden: 'cddv-msg-hidden'
+        } : arguments[0];
 
         _classCallCheck(this, V);
 
@@ -27,22 +29,18 @@ var V = function () {
                     return 0;
                 }
             },
-
             // 正则
             reg: function reg(v, _reg) {
                 return _reg.test(v) ? 0 : ['reg'];
             },
-
             // 区间
             limit: function limit(v, interval) {
                 return +v >= interval[0] && +v <= interval[1] ? 0 : ['limit'];
             },
-
             // 等于
             equal: function equal(v, target) {
                 return v == target ? 0 : ['equal'];
             },
-
             // 不等于
             unequal: function unequal(v, target) {
                 return v != target ? 0 : ['unequal'];
@@ -72,21 +70,25 @@ var V = function () {
         };
         this.inputCheckClass = o.inputCheckClass;
         this.finalCheckClass = o.finalCheckClass;
+        this.errorMsgHidden = o.errorMsgHidden;
+        this.errorMsgShow = o.errorMsgShow;
     }
 
     _createClass(V, [{
         key: 'cinfig',
         value: function cinfig() {
-            var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+            var o = arguments.length <= 0 || arguments[0] === undefined ? {
                 inputCheckClass: 'input-check-failed',
                 finalCheckClass: 'submit-check-failed'
-            };
+            } : arguments[0];
 
             this.inputCheckClass = o.inputCheckClass;
             this.finalCheckClass = o.finalCheckClass;
         }
     }, {
         key: 'addClass',
+
+        // 添加类
         value: function addClass(el, className) {
             var classArr = el.className.split();
             if (classArr.indexOf(className) == -1) {
@@ -94,11 +96,72 @@ var V = function () {
                 el.className = classArr.join(' ');
             }
         }
+
+        // 移出类
     }, {
         key: 'removeClass',
         value: function removeClass(el, className) {
             var reg = new RegExp("(\\s" + className + "|" + className + "\\s)", 'g');
             el.className = el.className.replace(reg, '');
+        }
+
+        // 检查
+    }, {
+        key: 'check',
+        value: function check(v, el, vm) {
+            var checkValue;
+
+            if (v.arg == 'reg') {
+                if (!this._regList[v.value.format]) {
+                    checkValue = typeof v.value.format == 'stirng' ? new RegExp(v.value.format) : v.value.format;
+                } else {
+                    checkValue = this._regList[v.value.format];
+                }
+            } else if (v.value.aim) {
+                checkValue = vm._cddv.forms[v.value.aim].value || vm.$data[v.value.aim];
+            } else {
+                checkValue = vm.$data[v.value.format] || v.value.format;
+            }
+
+            var ves = this.cfg[v.arg](el.value, checkValue);
+            if (ves == 0) {
+                el._cddv.validated = true;
+            } else {
+                el._cddv.validated = false;
+            }
+            return ves;
+        }
+
+        // 信息
+    }, {
+        key: 'msg',
+        value: function msg(v, el, ves) {
+            // 错误信息附加信息
+            var str = '';
+            switch (ves[0]) {
+                case 'nonvoid':
+                    str = '[' + v.value.title + ']';
+                    el._cddv.msg = str + this._ERR_MSG[ves];
+                    break;
+                case 'reg':
+                    str = "[" + v.value.title + ']格式错误';
+                    el._cddv.msg = str;
+                    break;
+                case 'limit':
+                    str = +el.value < v.value.format[0] ? '[' + v.value.title + ']应该大于' + v.value.format[0] : '[' + v.value.title + ']应该小于' + v.value.format[1];
+                    el._cddv.msg = this._ERR_MSG[ves] + str;
+                    break;
+                case 'equal':
+                    str = "[" + v.value.title + ']';
+                    el._cddv.msg = str + this._ERR_MSG[ves];
+                    break;
+                case 'unequal':
+                    str = '[' + v.value.title + ']';
+                    el._cddv.msg = str + this._ERR_MSG[ves];
+                    break;
+                default:
+                    el._cddv.msg = "[" + v.value.title + "]验证通过";
+            }
         }
     }, {
         key: 'install',
@@ -108,8 +171,6 @@ var V = function () {
             // 验证上的指令
             Vue.directive('cddv-input', {
                 bind: function bind(el, binding, vnode) {
-                    // 用来验证结果
-                    var ves = 0;
                     // 指令值
                     var v = {
                         value: binding.value || '',
@@ -119,28 +180,32 @@ var V = function () {
                     var vm = vnode.context,
                         cddv = vm._cddv;
 
-                    // 给el添加东西
-                    if (!el._cddv) {
-                        el._cddv = {
-                            dirty: false,
-                            v_type: v.arg,
-                            indeed_value: v.value.format,
-                            validated: false,
-                            msg: '未进行验证',
-                            title: v.value.title
-                        };
-                    }
-                    // 如果没有加入其中，则加入，把需要验证的项添加到实例的_.cddv.forms中
-                    if (!cddv.forms[v.value.id]) cddv.forms[v.value.id] = el;
+                    // 给el添加_cddv
+                    el._cddv = {
+                        dirty: false,
+                        v_type: v.arg,
+                        indeed_value: v.value.format,
+                        validated: false,
+                        msg: '未进行验证',
+                        title: v.value.title
+                    };
+                    // 初始化
+                    cddv.forms[v.value.id] = el;
                     // 给该元素添加监听事件验证
                     el.onchange = function () {
                         // 查看当前表单是否输入果值
                         if (!el._cddv.dirty) el._cddv.dirty = true;
-                        ves = cddv.check(v, el, vm);
+                        // 进行验证
+                        var ves = 0;
+                        ves = self.check(v, el, vm);
                         // 对每个元素设置
-                        cddv.msg(v, el, ves);
+                        self.msg(v, el, ves);
                         // 如果验证错误则添加一个类
-                        el._cddv.validated ? self.removeClass(el, self.inputCheckClass) : self.addClass(el, self.inputCheckClass);
+                        if (el._cddv.validated) {
+                            self.removeClass(el, self.inputCheckClass);
+                        } else {
+                            self.addClass(el, self.inputCheckClass);
+                        }
                         // 定义自定义事件
                         vm.$emit('cddv-checked');
                     };
@@ -154,17 +219,16 @@ var V = function () {
                     };
                     var vm = vnode.context;
 
-                    // 把元素的样式设置成non
-                    el.style.display = 'none';
-
-                    var listener = vm._cddv.forms[v.arg];
+                    self.addClass(el, self.errorMsgHidden);
                     // 自定义事件，监听目标值的变化
                     vm.$on('cddv-checked', function () {
-                        // console.log(vm._cddv)
+                        var listener = vm._cddv.forms[v.arg];
                         if (listener._cddv.validated) {
-                            el.style.display = 'none';
+                            self.removeClass(el, self.errorMsgShow);
+                            self.addClass(el, self.errorMsgHidden);
                         } else if (!listener._cddv.validated && listener._cddv.dirty) {
-                            el.style.display = 'block';
+                            self.removeClass(el, self.errorMsgHidden);
+                            self.addClass(el, self.errorMsgShow);
                             el.innerHTML = listener._cddv.msg;
                         }
                     });
@@ -185,11 +249,9 @@ var V = function () {
                         // 如果传递了key选项择进行指定的验证
                         if (v.value.keys) {
                             validated = v.value.keys.every(function (item, index) {
-                                // console.log(vm._cddv.forms[item])
                                 return vm._cddv.forms[item]._cddv.validated;
                             });
                         } else {
-                            console.log(vm._cddv.forms);
                             for (var item in vm._cddv.forms) {
                                 if (item == 'undefined') {
                                     continue;
@@ -219,60 +281,12 @@ var V = function () {
             });
             // 实例方法，为每个实例添加一个对象属性
             Vue.prototype._cddv = {
-                forms: {},
-                check: function check(v, el, vm) {
-                    if (v.arg == 'reg') {
-                        if (self._regList[v.value.format]) {
-                            v.value.format = self._regList[v.value.format];
-                        }
-                    }
-                    var checkValue = '';
-                    if (v.value.aim) {
-                        checkValue = vm._cddv.forms[v.value.aim].value || vm.$data[v.value.aim];
-                    } else {
-                        checkValue = vm.$data[v.value.format] || v.value.format;
-                    }
-
-                    return self.cfg[v.arg](el.value, checkValue);
-                },
-                msg: function msg(v, el, ves) {
-                    // 错误信息附加信息
-                    var str = '';
-                    switch (ves[0]) {
-                        case 'nonvoid':
-                            str = '[' + v.value.title + ']';
-                            el._cddv.validated = false;
-                            el._cddv.msg = str + self._ERR_MSG[ves];
-                            break;
-                        case 'reg':
-                            str = "[" + v.value.title + ']格式错误';
-                            el._cddv.validated = false;
-                            el._cddv.msg = str;
-                            break;
-                        case 'limit':
-                            str = +el.value < v.value.format[0] ? '[' + v.value.title + ']应该大于' + v.value.format[0] : '[' + v.value.title + ']应该小于' + v.value.format[1];
-                            el._cddv.validated = false;
-                            el._cddv.msg = self._ERR_MSG[ves] + str;
-                            break;
-                        case 'equal':
-                            str = "[" + v.value.title + ']';
-                            el._cddv.validated = false;
-                            el._cddv.msg = str + self._ERR_MSG[ves];
-                            break;
-                        case 'unequal':
-                            str = '[' + v.value.title + ']';
-                            el._cddv.validated = false;
-                            el._cddv.msg = str + self._ERR_MSG[ves];
-                            break;
-                        default:
-                            el._cddv.validated = true;
-                            el._cddv.msg = "[" + v.value.title + "]验证通过";
-                    }
-                },
-                value: function value() {
-                    return this;
-                }
+                forms: {}
             };
+
+            Vue.mixin({
+                mounted: function mounted() {}
+            });
         }
     }, {
         key: 'ERR_MSG',
@@ -292,6 +306,7 @@ var V = function () {
     }]);
 
     return V;
-}();
+})();
 
-exports.default = V;
+exports['default'] = V;
+module.exports = exports['default'];
