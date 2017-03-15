@@ -71,8 +71,8 @@ Vue.use(cddv);
 ### 示例
 ```
 <div>
-<label>确认密码</label>
-<input type='password' v-cddv-input:equal="{id:'rePsd',format:'Mail',title:'确认密码',mai:'newPsd'}" type=text ../>
+<label>电话</label>
+<input type='password' v-cddv-input:reg="{id:'rePsd',format:'Mobile',title:'确认密码',mai:'newPsd'}" type=text ../>
 </div>
 <div v-cddv-msg:email></div>
 
