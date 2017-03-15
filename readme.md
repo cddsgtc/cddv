@@ -85,9 +85,9 @@ Vue.use(cddv);
 ```
 <div class="inputs">
 <label>账户</label>
-  <input type="text" v-cddv-input:nonvoid="{id:'account',format:,title:'账户'}">
+  <input type="text" v-cddv-input:nonvoid="{id:'account',format:true,title:'账户'}">
   <label>密码</label>
-  <input type="text" v-cddv-input:equal="{id:'psd',format:,title:'密码'}">
+  <input type="text" v-cddv-input:reg="{id:'psd',format:'\\^[\w|\d]{6,16}$\\',title:'密码'}">
   <label>邮箱</label>
   <input type="text" v-cddv-input:reg="{id:'email',format:'Mail',title:'邮箱'}">
 </div>
@@ -128,15 +128,21 @@ Vue.use(cddv);
 该插件的默认类名是V
 所以使用new来建立一个实例，然后在构造函数中加入
 ```
-var cddv = new V({inputCheckClass:xxx,finalCheckClass:xxx})
+var cddv = new V({
+    inputCheckClass:xxx,
+    finalCheckClass:xxx
+})
 Vue.use(cddv)
 ```
 #### 二
 
 使用实例方法`config`,该方法传入一个跟构造函数一样的对象
 ```
-var cddv = new V({)
-cddv.config(inputCheckClass:xxx,finalCheckClass:xxx})
+var cddv = new V()
+cddv.config({
+    inputCheckClass:xxx,
+    finalCheckClass:xxx
+})
 Vue.use(cddv)
 ```
 
