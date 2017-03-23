@@ -1,5 +1,7 @@
 # cddv vue.js 表单验证插件使用说明
 
+版本：1.0.8
+
 ## 获取
 **github**:[这里](https://github.com/cddsgtc/cddv)
 
@@ -36,7 +38,7 @@ Vue.use(cddv);
 2. 使用一个指令加上指定参数来显示出目标表单验证的结果
 3. 提交方法上的指令，用来监视如果所有的验证完成，那么则允许提交，否则不允许
 
-## 表单指令——`v-cddv-input:arg={id:,format:,,title:,}`
+## 表单指令——`v-cddv-input:arg={id:<String>,format:<String[vue.$data|regex]>,,title:<String>,}`
 * `id`是每个表单独有的，用来识别表单，在进行信息反馈时也需要做为反馈的指令参数
 * `arg`是指令参数，填写的是需要验证的项
     - 常用的有
@@ -72,12 +74,12 @@ Vue.use(cddv);
 ```
 <div>
 <label>电话</label>
-<input type='password' v-cddv-input:reg="{id:'rePsd',format:'Mobile',title:'电话'}" type=text ../>
+<input type='password' v-cddv-input:reg="{id:'tell',format:'Mobile',title:'电话'}" type=text ../>
 </div>
-<div v-cddv-msg:email></div>
+<div v-cddv-msg:tell></div>
 
 ```
-## 错误信息指示指令——`v-cddv-msg:id`
+## 错误信息指示指令——`v-cddv-msg:id<String>`
 * 该条指令是显示指定表单的验证结果，如果错误则进行提醒，如果正确则不现实
 * 该条指令可以添加到大多数的元素上，可以进行任意的样式，不会影响效果
 
