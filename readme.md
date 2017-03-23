@@ -38,7 +38,7 @@ Vue.use(cddv);
 2. 使用一个指令加上指定参数来显示出目标表单验证的结果
 3. 提交方法上的指令，用来监视如果所有的验证完成，那么则允许提交，否则不允许
 
-## 表单指令——`v-cddv-input:arg={id:<String>,format:<String[vue.$data|regex]>,,title:<String>,}`
+## 表单指令——`v-cddv-input:arg={id:<String>,format:<String:[vue.$data|regex]>,title:<String>}`
 * `id`是每个表单独有的，用来识别表单，在进行信息反馈时也需要做为反馈的指令参数
 * `arg`是指令参数，填写的是需要验证的项
     - 常用的有
