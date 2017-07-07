@@ -2,7 +2,7 @@
 
 # 修改使用rollup打包，并且使用umd标准。
 
-版本：1.0.9-1
+版本：1.0.9-2
 
 ## 获取
 **github**:[这里](https://github.com/cddsgtc/cddv)
