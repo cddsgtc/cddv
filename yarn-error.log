@@ -1,0 +1,63 @@
+Arguments: 
+  D:\Program Files\nodejs\node.exe D:\Program Files (x86)\Yarn\bin\yarn.js -h
+
+PATH: 
+  C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;D:\Program Files (x86)\QuickTime\QTSystem\;D:\Program Files\Java\jdk1.8.0_66\bin;D:\Program Files\Java\jdk1.8.0_66\jre\bin;D:\Program Files\MySQLsever5.6.24\bin;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;D:\Go\bin;H:\Program Files\Git\cmd;D:\Program Files (x86)\Yarn\bin;D:\Program Files\MongoDB\Server\3.4\bin;D:\Program Files\nodejs\;D:\Program Files (x86)\Git\cmd;D:\Python27;D:\Program Files (x86)\妙手写作\mhand\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;d:\Program Files (x86)\Microsoft VS Code\bin;C:\Users\Administrator\AppData\Local\Yarn\bin;C:\Users\Administrator\AppData\Roaming\npm
+
+Yarn version: 
+  0.26.1
+
+Node version: 
+  8.1.3
+
+Platform: 
+  win32 x64
+
+npm manifest: 
+  {
+    "name": "vue-cdd-validator",
+    "version": "1.0.8-1",
+    "description": "一个用于vue.js表单验证的插件",
+    "main": "cddv.min.js",
+    "scripts": {
+      "build":"Rollup -c",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/cddsgtc/cddv.git"
+    },
+    "author": "cdd",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/cddsgtc/cddv/issues"
+    },
+    "homepage": "https://github.com/cddsgtc/cddv#readme",
+    "devDependencies": {
+      "babel-plugin-external-helpers": "^6.22.0",
+      "babel-preset-latest": "^6.24.1",
+      "babel-preset-stage-2": "^6.24.1",
+      "babel-preset-stage-3": "^6.24.1",
+      "rollup": "^0.43.0",
+      "rollup-plugin-babel": "^2.7.1",
+      "rollup-plugin-commonjs": "^8.0.2",
+      "rollup-plugin-json": "^2.3.0",
+      "rollup-plugin-node-resolve": "^3.0.0",
+      "rollup-watch": "^4.0.0"
+    },
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  SyntaxError: F:\home622\learning\node\cddv\package.json: Unexpected token } in JSON at position 885
+      at JSON.parse (<anonymous>)
+      at D:\Program Files (x86)\Yarn\lib\yarn-cli.js:747:57
+      at Generator.next (<anonymous>)
+      at step (D:\Program Files (x86)\Yarn\lib\yarn-cli.js:91:30)
+      at D:\Program Files (x86)\Yarn\lib\yarn-cli.js:102:13
+      at <anonymous>

@@ -1,4 +1,4 @@
-class V {
+export default class V {
     constructor(o = {
         inputCheckClass: 'input-check-failed',
         finalCheckClass: 'submit-check-failed',
@@ -268,4 +268,7 @@ class V {
         })
     }
 }
-export default V
+if(Vue){
+    let cddv = new V()
+    Vue.use(cddv)
+}
