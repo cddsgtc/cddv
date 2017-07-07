@@ -1,3 +1,2 @@
-let Cddv = require('./index')
-// let cddv = new Cddv()
-console.log(Cddv)
+require('./cddv.min.js')
+let cddv= require('./index.js')

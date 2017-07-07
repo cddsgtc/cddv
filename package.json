@@ -1,10 +1,11 @@
 {
   "name": "vue-cdd-validator",
-  "version": "1.0.9-1",
+  "version": "1.0.9-2",
   "description": "一个用于vue.js表单验证的插件",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c config/rollup.config.js",
+    "build-brw":"rollup -c config/brw.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

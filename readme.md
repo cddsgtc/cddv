@@ -17,6 +17,13 @@ yarn add vue-cdd-validator
 ```
 
 ## 安装
+1. 浏览器标签
+```
+<script src="xxx/vue.js"></script>
+<!--vue必须在前-->
+<script src="cddv/cddv.min.js"></script>
+```
+2. npm
 ```
 import Cddv from cddv;
 let cddv = new Cddv()
