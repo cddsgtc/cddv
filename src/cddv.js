@@ -39,7 +39,7 @@ export default class V {
             MailCode: /^\d{4}$/,
             UserName: /^[\w|\d]{4,16}$/,
             Password: /^[\w!@#$%^&*.]{6,16}$/,
-            Mobile: /^1[3|5|8]\d{9}$/,
+            Mobile: /^1[3|5|8|7|6]\d{9}$/,
             RealName: /^[\u4e00-\u9fa5 ]{2,10}$/,
             BankNum: /^\d{10,19}$/,
             Money: /^([1-9]\d*|0)$/,
@@ -76,7 +76,9 @@ export default class V {
         return this._cfg
     }
 
-    get regList() {
+    get 
+    
+    () {
         return this._regList
     }
     // 添加类
